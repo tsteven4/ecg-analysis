@@ -84,15 +84,15 @@ def analyze(rrfile, ecgfile, locfile=None, axislimit=DEFAULT_AXIS_LIMIT, thresho
     fig, ax = plt.subplots(3, 1, figsize=(24, 12), layout="constrained", sharex=True)
     ax[0].xaxis.grid(True)
     ax[0].yaxis.grid(True)
-    ax[0].scatter(time_p,rr_p,marker='x')
+    ax[0].scatter(time_p, rr_p, marker='x')
     ax[0].set_ylabel("RR(msec)", fontsize=12)
     ax[1].xaxis.grid(True)
     ax[1].yaxis.grid(True)
-    ax[1].plot(time_p,sigma_p)
+    ax[1].plot(time_p, sigma_p)
     ax[1].set_ylabel("SDΔRR(msec)", fontsize=12)
     ax[2].xaxis.grid(True)
     ax[2].yaxis.grid(True)
-    ax[2].plot(ecgtime,ecguv)
+    ax[2].plot(ecgtime, ecguv)
     ax[2].set_xlabel("time", fontsize=12)
     ax[2].set_ylabel(R"ECG($\mu$v)", fontsize=12)
     ax[0].set_title(f"{rrfile}, {ecgfile}", fontsize=14)
@@ -112,7 +112,7 @@ def analyze(rrfile, ecgfile, locfile=None, axislimit=DEFAULT_AXIS_LIMIT, thresho
 #        fig, ax = plt.subplots(1, 1, figsize=(24, 12), layout="constrained", sharex=True)
 #        ax.xaxis.grid(True)
 #        ax.yaxis.grid(True)
-#        ax.plot(time_p,sigma_p)
+#        ax.plot(time_p, sigma_p)
 #        ax.set_xlabel("time", fontsize=12)
 #        ax.set_ylabel("SDΔRR(msec)", fontsize=12)
 #        #ax.scatter(list(range(len(sigma_l))), sigma_l, marker='+', c='r')
@@ -123,11 +123,11 @@ def analyze(rrfile, ecgfile, locfile=None, axislimit=DEFAULT_AXIS_LIMIT, thresho
     warn = np.insert(warn, 0, False)
     warn = np.append(warn, False)
     indices = np.nonzero(np.diff(warn))[0]
-    warns = np.reshape(indices, (int(len(indices)/2),2))
+    warns = np.reshape(indices, (int(len(indices)/2), 2))
     time_pn = time_p.to_numpy()
     durations = np.diff(time_pn[warns])/np.timedelta64(1, 's')
     longds = durations >= 20
-    qualified_warn_indices_p =warns[longds[:,0]]
+    qualified_warn_indices_p =warns[longds[:, 0]]
     if len(qualified_warn_indices_p) > 0:
         print("Suspicious events found in " + rrfile, file=sys.stderr)
 
@@ -138,22 +138,46 @@ def analyze(rrfile, ecgfile, locfile=None, axislimit=DEFAULT_AXIS_LIMIT, thresho
 
         figno = 0
         for w in qualified_warn_indices_p:
+
             wstart = time_p[w[0]]
             wend = time_p[w[1]]
             deltat = (wend - wstart) / np.timedelta64(1, 's')
             print(f"warning from {wstart} to {wend}, duration {deltat} seconds.")
 
+            # plot the RR, SDΔRR, ecg waveforms in the zone
+            ecguv_subset = ecguv[np.logical_and(ecgtime>= wstart, ecgtime <= wend)]
+            ecgtime_subset = ecgtime[np.logical_and(ecgtime>= wstart, ecgtime <= wend)]
+            fig, ax = plt.subplots(3, 1, figsize=(24, 12), layout="constrained", sharex=True)
+            ax[0].xaxis.grid(True)
+            ax[0].yaxis.grid(True)
+            ax[0].scatter(time_p[w[0]:w[1]], rr_p[w[0]:w[1]], marker='x')
+            ax[0].set_ylabel("RR(msec)", fontsize=12)
+            ax[1].xaxis.grid(True)
+            ax[1].yaxis.grid(True)
+            ax[1].plot(time_p[w[0]:w[1]], sigma_p[w[0]:w[1]])
+            ax[1].set_ylabel("SDΔRR(msec)", fontsize=12)
+            ax[2].xaxis.grid(True)
+            ax[2].yaxis.grid(True)
+            ax[2].plot(ecgtime_subset, ecguv_subset)
+            ax[2].set_xlabel("time", fontsize=12)
+            ax[2].set_ylabel(R"ECG($\mu$v)", fontsize=12)
+            ax[0].set_title(f"{rrfile}, {ecgfile}", fontsize=14)
+            plt.savefig(ecgfile.replace(".csv", "") + "-" + str(figno) + ".png")
+            plt.close(fig)
+
+            # update the zone in the location plot
             if locfile:
                 lats = np.interp(time_p[w[0]:w[1]].to_numpy().view('int'), time_l.astype(int), latlon_l['lat'])
                 lons = np.interp(time_p[w[0]:w[1]].to_numpy().view('int'), time_l.astype(int), latlon_l['lon'])
-                subset = np.column_stack((lats,lons))
+                ll_subset = np.column_stack((lats, lons))
 
-                folium.PolyLine(cleanll(subset), color="red").add_to(eventmap)
-                folium.Circle(subset[0, :], color="red", fill=True, radius=10).add_to(eventmap)
-                folium.Circle(subset[-1, :], color="green", fill=True, radius=10).add_to(eventmap)
+                folium.PolyLine(cleanll(ll_subset), color="red").add_to(eventmap)
+                folium.Circle(ll_subset[0, :], color="red", fill=True, radius=10).add_to(eventmap)
+                folium.Circle(ll_subset[-1, :], color="green", fill=True, radius=10).add_to(eventmap)
 
+            # create a Poincaré plot for the zone
             fig, ax = plt.subplots(figsize=(10, 10), layout="constrained")
-            rr_p_subset = rr_p[np.logical_and(time_p>= wstart, time_p <= wend)]
+            rr_p_subset = rr_p[np.logical_and(time_p >= wstart, time_p <= wend)]
             x = rr_p_subset[0:-2]
             y = rr_p_subset[1:-1]
             ax.scatter(x, y)
@@ -176,14 +200,14 @@ def analyze(rrfile, ecgfile, locfile=None, axislimit=DEFAULT_AXIS_LIMIT, thresho
             ax.set_ylabel(r"$RR_{n+1}(msec)$", fontsize=12)
             ax.xaxis.grid(True)
             ax.yaxis.grid(True)
-
             plt.savefig(rrfile.replace(".csv", "") + "-" + str(figno) + ".png")
             plt.close(fig)
 
             figno += 1
 
-            if locfile:
-                eventmap.save(locfile.replace(".csv", ".html"))
+        # save the location plot with all zones updated
+        if locfile:
+            eventmap.save(locfile.replace(".csv", ".html"))
 
 def main():
     parser = argparse.ArgumentParser(
