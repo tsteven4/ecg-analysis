@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ecg_analysis"
+version = "0.0.1"
+authors = [
+  { name="Steven Trabert" },
+]
+description = "Polar ECG analysis"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "folium",
+  "matplotlib",
+  "numpy",
+  "pandas"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/tsteven4/ecg-analysis"
+"Bug Tracker" = "https://github.com/tsteven4/ecg-analysis/issues"
+
+[project.scripts]
+analyze_ecg = "ecg_analysis.analyze_ecg:main"
