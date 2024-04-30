@@ -188,7 +188,7 @@ def analyze(rrfile, ecgfile, locfile=None, axislimit=DEFAULT_AXIS_LIMIT, thresho
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="analyze_polar",
+        prog="analyze_ecg",
         description="Polar Sensor Logger RR and ECG analyzer",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
