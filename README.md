@@ -1,13 +1,14 @@
 # Polar ECG Data Analysis
 
-This program scans ECG and RR files from the Polar Sensor Logger app by Jukka Happonen.  Location data may be optionallyincluded.  The program looks for high variability of successive beat to beat interval differences.
+This program scans ECG and RR files from the [Polar Sensor Logger](https://play.google.com/store/apps/details?id=com.j_ware.polarsensorlogger).  Location data may be optionally included.  The program looks for high variability of successive beat to beat interval differences.
 
 ## Description of Operation
 
 The standard deviation of the difference in successive RR periods, SDΔRR (milliseconds) is calculated.  This is similar to the standard metric RMSSD, however SDΔRR is estimated from a subset of the data to make it robust to outliers.
-If the value of SDΔRR exceeds the threshold for a sufficient time then the zone is identified as suspicious.
 
-If zone(s) are identified a message "Suspicious events found in ..." is printed and [Poincaré plots](https://en.wikipedia.org/wiki/Poincar%C3%A9_plot) are saved as portable network graphics (.png) files.
+An interactive plot is created with three panels.  The top panel shows the RR data versus time.  The middle panel shows the SDΔRR metric versus time.  The bottom panel shows the ECG voltage values versus time.  You may pan and zoom using the plot controls.
+
+If the value of SDΔRR exceeds the threshold for a sufficient time then the zone is identified as suspicious.  If zone(s) are identified a message "Suspicious events found in ..." is printed and [Poincaré plots](https://en.wikipedia.org/wiki/Poincar%C3%A9_plot) are saved as portable network graphics (.png) files.  If location data is available then a web page showing the track in green with the suspicious zones in red will be created.
 
 The program may not identify zones where evidence of an arrhythmia exists.  The program may erroneously identify zones where no arrhythmia occurred.  Artifacts in the data may make the program unreliable.  The program is not intended to identify all types of arrhythmia.  Interpretations of the validity and significance of the results is left to the user and their doctor.
 
@@ -69,7 +70,7 @@ pip3 install --upgrade ecg_analysis-0.0.1-py3-none-any.whl
 
 ### Windows
 
-On windows python 3 can be downloaded from the [Microsoft Store](https://apps.microsoft.com/store/detail/python-310/9PJPW5LDXLZ5).  You may want to heed the message "WARNING: The script analyze_hrv.exe is installed in ... which is not on PATH.  Consider adding this directory to PATH ...".  Having the script directory in your path will make it easier analyze fit files from the command line.
+On windows python 3 can be downloaded from the [Microsoft Store](https://apps.microsoft.com/store/detail/python-310/9PJPW5LDXLZ5).  You may want to heed the message "WARNING: The script analyze_ecg.exe is installed in ... which is not on PATH.  Consider adding this directory to PATH ...".  Having the script directory in your path will make it easier analyze fit files from the command line.
 
 ### macOS
 
