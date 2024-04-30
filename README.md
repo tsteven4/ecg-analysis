@@ -8,7 +8,7 @@ The standard deviation of the difference in successive RR periods, SDΔRR (milli
 
 An interactive plot is created with three panels.  The top panel shows the RR data versus time.  The middle panel shows the SDΔRR metric versus time.  The bottom panel shows the ECG voltage values versus time.  You may pan and zoom using the plot controls.
 
-If the value of SDΔRR exceeds the threshold for a sufficient time then the zone is identified as suspicious.  If zone(s) are identified a message "Suspicious events found in ..." is printed and [Poincaré plots](https://en.wikipedia.org/wiki/Poincar%C3%A9_plot) are saved as portable network graphics (.png) files.  If location data is available then a web page showing the track in green with the suspicious zones in red will be created.
+If the value of SDΔRR exceeds the threshold for a sufficient time then the zone is identified as suspicious.  If zone(s) are identified a message "Suspicious events found in ..." is printed and both ECG plots and [Poincaré plots](https://en.wikipedia.org/wiki/Poincar%C3%A9_plot) are saved as portable network graphics (.png) files.  If location data is available then a web page showing the track in green with the suspicious zones in red will be created.
 
 The program may not identify zones where evidence of an arrhythmia exists.  The program may erroneously identify zones where no arrhythmia occurred.  Artifacts in the data may make the program unreliable.  The program is not intended to identify all types of arrhythmia.  Interpretations of the validity and significance of the results is left to the user and their doctor.
 
