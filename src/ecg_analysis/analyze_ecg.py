@@ -228,7 +228,7 @@ def main():
         "--axislimit",
         "-a",
         type=float,
-        help="Maximum axis value for plots(seconds)",
+        help="Maximum axis value for Poincaré plots(seconds)",
         default=DEFAULT_AXIS_LIMIT
     )
     parser.add_argument(

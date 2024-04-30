@@ -26,7 +26,7 @@ options:
   --location LOCATION, -l LOCATION
                         Input location file (default: None)
   --axislimit AXISLIMIT, -a AXISLIMIT
-                        Maximum axis value for plots(seconds) (default: 1.0)
+                        Maximum axis value for Poincaré plots(seconds) (default: 1.0)
   --threshold THRESHOLD, -t THRESHOLD
                         SDΔRR warning threshold(msec) (default: 50)
 ```
